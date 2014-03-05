@@ -16,8 +16,8 @@ su x +N' y = x +N' su y
 
 lemma+N' : forall x y -> su x +N' y == su (x +N' y)
 lemma+N' ze y = refl
-lemma+N' (su x) y rewrite lemma+N' x (su y) = refl
-
+--lemma+N' (su x) y rewrite lemma+N' x (su y) = refl
+lemma+N' (su x) y = lemma+N' x (su y)
 
 {- 1.2 Check that you can use "rewrite" to push vector concatenation
    through, despite choosing the awkward addition. -}
@@ -34,10 +34,12 @@ _++'_ {m} {n} xs ys = {!!}
    to a pattern match. -}
 
 chop : forall m {n X} -> Vec X (m +N n) -> Vec X m * Vec X n
-chop ze      xs        = {!!}
+chop ze      xs        = [] , xs
 chop (su m)  (x , xs)  with  chop m xs
-chop (su m)  (x , xs)  |     ys , zs    = {!!}
+chop (su m)  (x , xs)  |     ys , zs    =  (x , ys) , zs
 
+test_chop : Vec Nat 2 * Vec Nat 3
+test_chop = chop 2 ( 0 , 1 , 2 , 3 , 4 , [])
 
 {- Recall zapp and vec -}
 
@@ -53,14 +55,13 @@ vec {su n} x = x , vec x
 {- 1.4 One-liners, using zapp and vec -}
 
 vmap : forall {n S T} -> (S -> T) -> Vec S n -> Vec T n
-vmap f ss = {!!}
+vmap f ss = zapp (vec f) ss
 
 _+V_ : forall {n} -> Vec Nat n -> Vec Nat n -> Vec Nat n
-xs +V ys = {!!}
+xs +V ys = zapp (vmap (_+N_) xs) ys
 
 vzip : forall {n S T} -> Vec S n -> Vec T n -> Vec (S * T) n
-vzip ss ts = {!!}
-
+vzip ss ts = zapp (vmap (_,_) ss) ts
 
 {- here is vector traversal -}
 
@@ -76,8 +77,10 @@ vtrav F pure _$_ f (s , ss)  = (pure _,_ $ f s) $ vtrav F pure _$_ f ss
 {- 1.6 vector map bis -}
 
 vmap' : forall {n S T} -> (S -> T) -> Vec S n -> Vec T n
-vmap' = vtrav {!!} {!!} {!!}
+vmap' = vtrav id id id
 
+test_vmap' : Vec Nat 3
+test_vmap' = vmap' (_+N_ 2) (0 , 1 , 2 , [])
 
 {- 1.7 vector total -}
 
@@ -88,11 +91,16 @@ vtotal = vtrav {!!} {!!} {!!} {!!}
 {- 1.8 scalar product -}
 
 _*N_ : Nat -> Nat -> Nat
-x *N y = {!!}
+ze   *N y = ze
+su x *N y =  (x *N y) +N y
+
+test_mult_nat : Nat
+test_mult_nat = 5 *N 6
 
 _*V_ : forall {n} -> Vec Nat n -> Vec Nat n -> Nat
-xs *V ys = {!!}
-
+xs *V ys = vtotal (vmap s (vzip xs ys))
+           where s : Sg Nat (\_ -> Nat) -> Nat
+                 s ( x , y ) = x *N y
 
 {- matrices -}
 
