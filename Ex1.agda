@@ -85,14 +85,16 @@ test_vmap' = vmap' (_+N_ 2) (0 , 1 , 2 , [])
 {- 1.7 vector total -}
 
 vtotal : forall {n} -> Vec Nat n -> Nat
-vtotal = vtrav {!!} {!!} {!!} {!!}
+vtotal = vtrav (\ _ -> Nat) (\ _ -> 0) (\ x y -> x +N y) {T = Zero} (\ x -> x)
 
+vtotal_test : Nat
+vtotal_test = vtotal (0 , 1 , 2 , 3 , [])
 
 {- 1.8 scalar product -}
 
 _*N_ : Nat -> Nat -> Nat
 ze   *N y = ze
-su x *N y =  (x *N y) +N y
+su x *N y = (x *N y) +N y
 
 test_mult_nat : Nat
 test_mult_nat = 5 *N 6
