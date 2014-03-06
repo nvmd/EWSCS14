@@ -23,11 +23,17 @@ lemma+N' (su x) y = lemma+N' x (su y)
    through, despite choosing the awkward addition. -}
 
 _++_ : forall {m n X} -> Vec X m -> Vec X n -> Vec X (m +N n)
-[] ++ ys        = ys
-(x , xs) ++ ys  = x , xs ++ ys
+[]       ++ ys = ys
+(x , xs) ++ ys = x , xs ++ ys
+
+
+lemmaVecL+N : forall {x y : Nat} {X} -> Vec X (su x +N' y) == Vec X (su (x +N' y))
+lemmaVecL+N = {!!}
 
 _++'_ : forall {m n X} -> Vec X m -> Vec X n -> Vec X (m +N' n)
-_++'_ {m} {n} xs ys = {!!}
+_++'_            []       ys = ys
+_++'_ {su m} {n} (x , xs) ys rewrite lemma+N' m n = x , xs ++' ys
+--_++'_ {su m} {n} {X} (x , xs) ys rewrite lemmaVecL+N {m} {n} {X} = x , xs ++' ys
 
 
 {- 1.3 Chop a vector in two. Note how "with" lets us grab more information
