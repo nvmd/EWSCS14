@@ -115,6 +115,8 @@ xs *V ys = vtotal (vmap s (vzip xs ys))
 Matrix : Set -> Nat * Nat -> Set
 Matrix X (r , c) = Vec (Vec X r) c  -- a row of columns
 
+matrix_test : Matrix Nat (2 , 3)
+matrix_test = (0 , 1 , []) , (2 , 3 , []) , (4 , 5 , []) , []
 
 {- 1.9 vector transposition (a one-liner) -}
 
